@@ -1,0 +1,7 @@
+{
+    "groups": [
+        "default"
+    ],
+    "hostname": "host",
+    "ipaddr": "127.0.0.1"
+}

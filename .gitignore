@@ -1,0 +1,6 @@
+*.pyc
+*.orig
+*~
+*.egg-info
+build
+dist
