@@ -26,13 +26,19 @@ def print_entry(auth, url):
     print(result.content)
 
 
-def create_entry(auth, url, fd):
-    result = requests.post(url, data=fd.read(), headers=HEADERS, auth=auth)
+def create_entry(auth, url, fd=None, data=None):
+    if data is not None:
+        result = requests.post(url, data=data, headers=HEADERS, auth=auth)
+    elif fd is not None:
+        result = requests.post(url, data=fd.read(), headers=HEADERS, auth=auth)
     result.raise_for_status()
 
 
-def update_entry(auth, url, fd):
-    result = requests.put(url, data=fd.read(), headers=HEADERS, auth=auth)
+def update_entry(auth, url, fd=None, data=None):
+    if data is not None:
+        result = requests.put(url, data=data, headers=HEADERS, auth=auth)
+    elif fd is not None:
+        result = requests.put(url, data=fd.read(), headers=HEADERS, auth=auth)
     result.raise_for_status()
 
 
@@ -58,7 +64,8 @@ def cli(ctx, url, user, password):
         'AUTH': None,
         'HOST_URL': url + '/hosts/',
         'GROUP_URL': url + '/groups/',
-        'TEMPLATE_URL': url + '/templates/'
+        'TEMPLATE_URL': url + '/templates/',
+        'POWER_URL': url + '/power/'
     }
     if user is not None and password is not None:
         ctx.obj['AUTH'] = HTTPBasicAuth('user', 'pass')
@@ -79,6 +86,12 @@ def group(ctx):
 @cli.group('template', help='Template operations')
 @click.pass_context
 def template(ctx):
+    pass
+
+
+@cli.group('power', help='Power operations')
+@click.pass_context
+def power(ctx):
     pass
 
 
@@ -105,7 +118,7 @@ def get_host(ctx, uuid, all):
 @click.argument('jsonfile', type=click.File('rb'))
 @click.pass_context
 def create_host(ctx, uuid, jsonfile):
-    create_entry(ctx.obj['AUTH'], ctx.obj['HOST_URL'] + uuid, jsonfile)
+    create_entry(ctx.obj['AUTH'], ctx.obj['HOST_URL'] + uuid, fd=jsonfile)
 
 
 @host.command('update', help='Update parameters of a host')
@@ -113,7 +126,7 @@ def create_host(ctx, uuid, jsonfile):
 @click.argument('jsonfile', type=click.File('rb'))
 @click.pass_context
 def update_host(ctx, uuid, jsonfile):
-    update_entry(ctx.obj['AUTH'], ctx.obj['HOST_URL'] + uuid, jsonfile)
+    update_entry(ctx.obj['AUTH'], ctx.obj['HOST_URL'] + uuid, fd=jsonfile)
 
 
 @host.command('delete', help='Remove parameters of a host')
@@ -145,7 +158,7 @@ def get_group(ctx, name, all):
 @click.argument('jsonfile', type=click.File('rb'))
 @click.pass_context
 def create_group(ctx, name, jsonfile):
-    create_entry(ctx.obj['AUTH'], ctx.obj['GROUP_URL'] + name, jsonfile)
+    create_entry(ctx.obj['AUTH'], ctx.obj['GROUP_URL'] + name, fd=jsonfile)
 
 
 @group.command('update', help='Update parameters of a group')
@@ -153,7 +166,7 @@ def create_group(ctx, name, jsonfile):
 @click.argument('jsonfile', type=click.File('rb'))
 @click.pass_context
 def update_group(ctx, name, jsonfile):
-    update_entry(ctx.obj['AUTH'], ctx.obj['GROUP_URL'] + name, jsonfile)
+    update_entry(ctx.obj['AUTH'], ctx.obj['GROUP_URL'] + name, fd=jsonfile)
 
 
 @group.command('delete', help='Remove parameters of a group')
@@ -186,7 +199,7 @@ def get_template(ctx, name, host):
 @click.argument('jsonfile', type=click.File('rb'))
 @click.pass_context
 def create_template(ctx, name, jsonfile):
-    create_entry(ctx.obj['AUTH'], ctx.obj['TEMPLATE_URL'] + name, jsonfile)
+    create_entry(ctx.obj['AUTH'], ctx.obj['TEMPLATE_URL'] + name, fd=jsonfile)
 
 
 @template.command('update', help='Update a template')
@@ -194,7 +207,7 @@ def create_template(ctx, name, jsonfile):
 @click.argument('jsonfile', type=click.File('rb'))
 @click.pass_context
 def update_template(ctx, name, jsonfile):
-    update_entry(ctx.obj['AUTH'], ctx.obj['TEMPLATE_URL'] + name, jsonfile)
+    update_entry(ctx.obj['AUTH'], ctx.obj['TEMPLATE_URL'] + name, fd=jsonfile)
 
 
 @template.command('delete', help='Remove a template')
@@ -202,6 +215,38 @@ def update_template(ctx, name, jsonfile):
 @click.pass_context
 def delete_template(ctx, name):
     delete_entry(ctx.obj['AUTH'], ctx.obj['TEMPLATE_URL'] + name)
+
+
+@power.command('on', help='Start a host')
+@click.argument('uuid')
+@click.pass_context
+def power_on(ctx, uuid):
+    mode = '{"power": "on"}'
+    update_entry(ctx.obj['AUTH'], ctx.obj['POWER_URL'] + uuid, data=mode)
+
+
+@power.command('off', help='Stop a host')
+@click.argument('uuid')
+@click.pass_context
+def power_off(ctx, uuid):
+    mode = '{"power": "off"}'
+    update_entry(ctx.obj['AUTH'], ctx.obj['POWER_URL'] + uuid, data=mode)
+
+
+@power.command('reset', help='Reset a host')
+@click.argument('uuid')
+@click.pass_context
+def power_reset(ctx, uuid):
+    mode = '{"power": "reset"}'
+    update_entry(ctx.obj['AUTH'], ctx.obj['POWER_URL'] + uuid, data=mode)
+
+
+@power.command('status', help='Show power status of a host')
+@click.argument('uuid')
+@click.pass_context
+def get_power_status(ctx, uuid):
+    print_entry(ctx.obj['AUTH'], ctx.obj['POWER_URL'] + uuid)
+
 
 if __name__ == '__main__':
     cli(obj={})

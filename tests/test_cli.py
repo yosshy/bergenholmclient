@@ -164,3 +164,35 @@ class HostSubcommandTestCase(unittest.TestCase):
         self.runner.invoke(cli, ['template', 'delete', TEMPLATE])
         patched.assert_has_calls([
             call('http://127.0.0.1/api/1.0/templates/' + TEMPLATE, auth=None)])
+
+    # power subcommand test cases
+
+    @patch('requests.get')
+    def test_power_status(self, patched):
+        self.runner.invoke(cli, ['power', 'status', UUID])
+        patched.assert_has_calls([
+            call('http://127.0.0.1/api/1.0/power/' + UUID, auth=None)])
+
+    @patch('requests.put')
+    def test_power_on(self, patched):
+        data = '{"power": "on"}'
+        self.runner.invoke(cli, ['power', 'on', UUID])
+        patched.assert_has_calls([
+            call('http://127.0.0.1/api/1.0/power/' + UUID,
+                 data=data, headers=HEADERS, auth=None)])
+
+    @patch('requests.put')
+    def test_power_off(self, patched):
+        data = '{"power": "off"}'
+        self.runner.invoke(cli, ['power', 'off', UUID])
+        patched.assert_has_calls([
+            call('http://127.0.0.1/api/1.0/power/' + UUID,
+                 data=data, headers=HEADERS, auth=None)])
+
+    @patch('requests.put')
+    def test_power_reset(self, patched):
+        data = '{"power": "reset"}'
+        self.runner.invoke(cli, ['power', 'reset', UUID])
+        patched.assert_has_calls([
+            call('http://127.0.0.1/api/1.0/power/' + UUID,
+                 data=data, headers=HEADERS, auth=None)])

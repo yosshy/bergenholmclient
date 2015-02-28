@@ -34,11 +34,12 @@ Test bergenholmclient:
 Usage
 -----
 
-bergenholmclient has 3 subcommands below:
+bergenholmclient has subcommands below:
 
 * host
 * group
 * template
+* power
 
 You can see the help message like below:
 
@@ -59,13 +60,21 @@ You can see the help message like below:
       show    show parameters of a host
       update  update parameters of a host
 
-And each subcommand has CRUD subminor commands below:
+And host, group and template subcommand have CRUD subminor commands
+below:
 
 * list
 * show <id>
 * create <id> <file>
 * update <id> <file>
 * delete <id>
+
+power subcommand has subminor commands below:
+
+* status <id>
+* on <id>
+* off <id>
+* reset <id>
 
 You can see the help message like below:
 

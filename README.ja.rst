@@ -34,11 +34,12 @@ bergenholmclient をテストします。
 使用法
 ------
 
-bergenholmclient は以下の３つのサブコマンドがあります。
+bergenholmclient は以下のサブコマンドがあります。
 
 * host
 * group
 * template
+* power
 
 下記のようにするとヘルプメッセージが表示されます。
 
@@ -59,13 +60,21 @@ bergenholmclient は以下の３つのサブコマンドがあります。
       show    show parameters of a host
       update  update parameters of a host
 
-各サブコマンドには作成・削除・更新・表示の子コマンドがあります。
+host, group, template サブコマンドには作成・削除・更新・表示の子コマン
+ドがあります。
 
 * list
 * show <id>
 * create <id> <file>
 * update <id> <file>
 * delete <id>
+
+power サブコマンドには電源状態表示／変更の子コマンドがあります。
+
+* status <id>
+* on <id>
+* off <id>
+* reset <id>
 
 下記のようにするとヘルプメッセージが表示されます。
 
