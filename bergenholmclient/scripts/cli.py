@@ -9,6 +9,8 @@ import bergenholmclient
 DEFAULT_URL = 'http://127.0.0.1/api/1.0'
 HEADERS = {'Content-Type': 'application/json'}
 PARAMS = '?params=all'
+MARK_INSTALLED = "?installed=mark"
+UNMARK_INSTALLED = "?installed=unmark"
 
 
 def print_list(auth, url, key):
@@ -127,6 +129,20 @@ def create_host(ctx, uuid, jsonfile):
 @click.pass_context
 def update_host(ctx, uuid, jsonfile):
     update_entry(ctx.obj['AUTH'], ctx.obj['HOST_URL'] + uuid, fd=jsonfile)
+
+
+@host.command('mark-installed', help='Register parameters of a host')
+@click.argument('uuid')
+@click.pass_context
+def mark_installed_host(ctx, uuid):
+    print_entry(ctx.obj['AUTH'], ctx.obj['HOST_URL'] + uuid + MARK_INSTALLED)
+
+
+@host.command('unmark-installed', help='Register parameters of a host')
+@click.argument('uuid')
+@click.pass_context
+def mark_uninstalled_host(ctx, uuid):
+    print_entry(ctx.obj['AUTH'], ctx.obj['HOST_URL'] + uuid + UNMARK_INSTALLED)
 
 
 @host.command('delete', help='Remove parameters of a host')

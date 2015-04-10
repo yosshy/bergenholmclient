@@ -65,6 +65,20 @@ class HostSubcommandTestCase(unittest.TestCase):
             call('http://127.0.0.1/api/1.0/hosts/' + UUID,
                  data=data, headers=HEADERS, auth=None)])
 
+    @patch('requests.get')
+    def test_host_mark_installed(self, patched):
+        self.runner.invoke(cli, ['host', 'mark-installed', UUID])
+        patched.assert_has_calls([
+            call('http://127.0.0.1/api/1.0/hosts/' + UUID + \
+                '?installed=mark', auth=None)])
+
+    @patch('requests.get')
+    def test_host_unmark_installed(self, patched):
+        self.runner.invoke(cli, ['host', 'unmark-installed', UUID])
+        patched.assert_has_calls([
+            call('http://127.0.0.1/api/1.0/hosts/' + UUID + \
+                 '?installed=unmark', auth=None)])
+
     @patch('requests.delete')
     def test_host_delete(self, patched):
         self.runner.invoke(cli, ['host', 'delete', UUID])
