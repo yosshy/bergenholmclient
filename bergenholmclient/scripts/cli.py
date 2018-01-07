@@ -13,8 +13,8 @@ MARK_INSTALLED = "?installed=mark"
 UNMARK_INSTALLED = "?installed=unmark"
 
 
-def print_list(auth, url, key):
-    result = requests.get(url, auth=auth)
+def print_list(auth, url, key, query=None):
+    result = requests.get(url, auth=auth, params=query)
     result.raise_for_status()
     entries = result.json().get(key, [])
     entries.sort()
@@ -98,9 +98,16 @@ def power(ctx):
 
 
 @host.command('list', help='List uuids of host')
+@click.option('--query', '-q', multiple=True,
+              help='Query condition')
 @click.pass_context
-def get_hosts(ctx):
-    print_list(ctx.obj['AUTH'], ctx.obj['HOST_URL'], 'hosts')
+def get_hosts(ctx, query):
+    query_dict = {}
+    for entry in query:
+        if "=" in entry:
+            key, value = entry.split('=', 1)
+        query_dict[key] = value
+    print_list(ctx.obj['AUTH'], ctx.obj['HOST_URL'], 'hosts', query=query_dict)
 
 
 @host.command('show', help='Show parameters of a host')

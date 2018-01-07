@@ -30,7 +30,15 @@ class HostSubcommandTestCase(unittest.TestCase):
     def test_host_list(self, patched):
         self.runner.invoke(cli, ['host', 'list'])
         patched.assert_has_calls([
-            call('http://127.0.0.1/api/1.0/hosts/', auth=None)])
+            call('http://127.0.0.1/api/1.0/hosts/', auth=None,
+                 params={})])
+
+    @patch('requests.get')
+    def test_host_list_query(self, patched):
+        self.runner.invoke(cli, ['host', 'list', '-q', 'foo=bar'])
+        patched.assert_has_calls([
+            call('http://127.0.0.1/api/1.0/hosts/', auth=None,
+                 params={'foo': 'bar'})])
 
     @patch('requests.get')
     def test_host_show(self, patched):
@@ -91,7 +99,8 @@ class HostSubcommandTestCase(unittest.TestCase):
     def test_group_list(self, patched):
         self.runner.invoke(cli, ['group', 'list'])
         patched.assert_has_calls([
-            call('http://127.0.0.1/api/1.0/groups/', auth=None)])
+            call('http://127.0.0.1/api/1.0/groups/', auth=None,
+                 params=None)])
 
     @patch('requests.get')
     def test_group_show(self, patched):
@@ -138,7 +147,8 @@ class HostSubcommandTestCase(unittest.TestCase):
     def test_template_list(self, patched):
         self.runner.invoke(cli, ['template', 'list'])
         patched.assert_has_calls([
-            call('http://127.0.0.1/api/1.0/templates/', auth=None)])
+            call('http://127.0.0.1/api/1.0/templates/', auth=None,
+                 params=None)])
 
     @patch('requests.get')
     def test_template_show(self, patched):
